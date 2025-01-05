@@ -10,7 +10,7 @@ gtag_id = "G-33WB8LVHR6"
 
 [[sections]]
 title = "Modification List"
-description = "Most up-to-date list"
+##description = "Most up-to-date list"
 direction = "column"
 item_style = "outline"
 [[sections.items]]
@@ -18,13 +18,13 @@ title = "Borla S-Type Exhaust"
 ##description = "A mesmerizing thriller delving into the dark world of crime journalism"
 url = "https://www.borla.com/products/mazda-mx-5-miata-axle-back-exhaust-system-11919/"
 [[sections.items]]
-title = "Brokeback Mountain"
-description = "A groundbreaking romantic drama challenging societal expectations"
-url = "https://www.imdb.com/title/tt0388795/"
+title = "Konig Hypergram (Metallic Carbon W/ Machined Lip)"
+##description = "A groundbreaking romantic drama challenging societal expectations"
+url = "https://konigwheels.com/wheels/flow-formed-wheels/hypergram/"
 [[sections.items]]
-title = "Prisoners"
-description = "A gripping thriller entangling a detective in a web of secrets during a kidnapping investigation"
-url = "https://www.imdb.com/title/tt1392214/"
+title = "Michelin Pilot Sport 4S Tires"
+##description = "A gripping thriller entangling a detective in a web of secrets during a kidnapping investigation"
+url = "https://www.michelin.ca/en/auto/tires/michelin-pilot-sport-4-s/"
 
 [[sections]]
 title = "Links"
@@ -33,13 +33,5 @@ direction = "row"
 item_style = "filled"
 [[sections.items]]
 title = "Instagram"
-url = "https://www.instagram.com/jakegyllenhaal"
-[[sections.items]]
-title = "IMDb"
-url = "https://www.imdb.com/name/nm0350453/"
-[[sections.items]]
-title = "Wikipedia"
-url = "https://en.wikipedia.org/wiki/Jake_Gyllenhaal"
-[[sections.items]]
-title = "Rotten Tomatoes"
-url = "https://www.rottentomatoes.com/celebrity/jake_gyllenhaal"
+url = "https://www.instagram.com/polymetal_miata"
+
