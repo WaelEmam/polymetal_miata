@@ -25,6 +25,19 @@ url = "https://konigwheels.com/wheels/flow-formed-wheels/hypergram/"
 title = "Michelin Pilot Sport 4S Tires"
 ##description = "A gripping thriller entangling a detective in a web of secrets during a kidnapping investigation"
 url = "https://www.michelin.ca/en/auto/tires/michelin-pilot-sport-4-s/"
+[[sections.items]]
+title = "FM corner light"
+url = "https://flyinmiata.com/en-ca/products/variant-nd-corner-light-set?variant=43744892420351"
+[[sections.items]]
+title = "MX5things Dashcam cable"
+url = "https://mx5things.com/en-ca/collections/mazda-mx-5-2016-nd-st/products/cable-for-plug-n-play-installation-blackvue-dashcam"
+[[sections.items]]
+title = "MX5things Airbag warning overlay"
+url = "https://mx5things.com/en-ca/collections/mazda-mx-5-2016-nd-st/products/air-bag-warning-overlay-replacement"
+[[sections.items]]
+title = "MX5things DRL harness"
+url = "https://mx5things.com/en-ca/collections/mazda-mx-5-2016-nd-st/products/drl-harness"
+
 
 [[sections]]
 title = "Links"
