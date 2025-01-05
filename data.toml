@@ -1,5 +1,5 @@
 name = "Polymetal Miata"
-description = "Polymetal Miata Mod List"
+description = "All Polymetal_miata Mods are listed below"
 keywords = "Mazda, Miata, MX-5, Polymetal"
 image = "miata.webp"
 theme = "dark"
@@ -9,14 +9,14 @@ gtag_id = "G-33WB8LVHR6"
 
 
 [[sections]]
-title = "Borla S-Type Exhaust"
-url = "https://www.borla.com/products/mazda-mx-5-miata-axle-back-exhaust-system-11919"
+title = "Modification List"
+description = "Most up-to-date list"
 direction = "column"
 item_style = "outline"
 [[sections.items]]
-title = "Nightcrawler"
-description = "A mesmerizing thriller delving into the dark world of crime journalism"
-url = "https://www.imdb.com/title/tt2872718/"
+title = "Borla S-Type Exhaust"
+##description = "A mesmerizing thriller delving into the dark world of crime journalism"
+url = "https://www.borla.com/products/mazda-mx-5-miata-axle-back-exhaust-system-11919/"
 [[sections.items]]
 title = "Brokeback Mountain"
 description = "A groundbreaking romantic drama challenging societal expectations"
