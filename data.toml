@@ -21,7 +21,7 @@ title = "Borla S-Type Exhaust"
 ##description = "A mesmerizing thriller delving into the dark world of crime journalism"
 url = "https://www.borla.com/products/mazda-mx-5-miata-axle-back-exhaust-system-11919/"
 icon = "https://www.borla.com/media/catalog/product/11919/11919-main-1-large.jpg"
-icon_align = "right"
+##icon_align = "right"
 
 [[sections.items]]
 title = "Konig Hypergram (Metallic Carbon W/ Machined Lip)"
