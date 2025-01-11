@@ -14,7 +14,7 @@ title = "Modification List"
 ##description = "Most up-to-date list"
 direction = "column"
 item_style = "outline"
-icon_size = "35px"
+icon_size = "50px"
 
 [[sections.items]]
 title = "Borla S-Type Exhaust"
