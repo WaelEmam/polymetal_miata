@@ -26,31 +26,40 @@ icon = "https://www.borla.com/media/catalog/product/11919/11919-main-1-large.jpg
 title = "Konig Hypergram (Metallic Carbon W/ Machined Lip)"
 ##description = "A groundbreaking romantic drama challenging societal expectations"
 url = "https://konigwheels.com/wheels/flow-formed-wheels/hypergram/"
+icon = "https://konigwheels.com/cdn/shop/files/hypergram-carbon_7bafac7f-bbdf-4e4a-8e83-8d71d45db541.webp?v=1732235596&width=1946"
 [[sections.items]]
 title = "Michelin Pilot Sport 4S Tires"
 ##description = "A gripping thriller entangling a detective in a web of secrets during a kidnapping investigation"
 url = "https://www.michelin.ca/en/auto/tires/michelin-pilot-sport-4-s/"
+icon = "https://aecbmesvcm.cloudimg.io/v7/https://cxf-prod.azureedge.net/b2c-experience-production/attachments/clxktok3t0r4001ljxli6t8yz-4w-240-tire-michelin-pilot-sport-4-s-en-us-features-and-benefits-1-nosignature-16-slash-9-web.max.png"
 [[sections.items]]
 title = "FM corner light"
 url = "https://flyinmiata.com/en-ca/products/variant-nd-corner-light-set?variant=43744892420351"
+icon = "https://aecbmesvcm.cloudimg.io/v7/https://cxf-prod.azureedge.net/b2c-experience-production/attachments/clxktok3t0r4001ljxli6t8yz-4w-240-tire-michelin-pilot-sport-4-s-en-us-features-and-benefits-1-nosignature-16-slash-9-web.max.png"
 [[sections.items]]
 title = "MX5things Dashcam cable"
 url = "https://mx5things.com/en-ca/collections/mazda-mx-5-2016-nd-st/products/cable-for-plug-n-play-installation-blackvue-dashcam"
+icon = "https://mx5things.com/cdn/shop/products/USBACC_720x.jpg?v=1582664500"
 [[sections.items]]
 title = "MX5things Airbag warning overlay"
 url = "https://mx5things.com/en-ca/collections/mazda-mx-5-2016-nd-st/products/air-bag-warning-overlay-replacement"
+icon = "https://mx5things.com/cdn/shop/products/ST_720x.png?v=1612122900"
 [[sections.items]]
 title = "MX5things DRL harness"
 url = "https://mx5things.com/en-ca/collections/mazda-mx-5-2016-nd-st/products/drl-harness"
+icon = "https://mx5things.com/cdn/shop/products/DRL_V4_720x.jpg?v=1592522763"
 [[sections.items]]
 title = "Cravenspeed Dipstick Handle"
 url = "https://www.cravenspeed.com/the-dipstick-handle-for-mazda/"
+icon = "https://cdn11.bigcommerce.com/s-351ed/images/stencil/original/products/7644/44900/dipstick-4__37044.1571244541__55685.1728424715.jpg?c=2"
 [[sections.items]]
 title = "Zunsport Full Lower Grille"
 url = "https://www.zunsport.com/en/mazda-grilles/mazda-mx5-mk4-full-lower-grille"
+icon = "https://cdn11.bigcommerce.com/s-d6wcnsknrk/images/stencil/1280x1280/products/1113/11347/ZMA59715__31559.1719398451.jpg?c=1"
 [[sections.items]]
 title = "TUXMAT Car Mats"
 url = "https://www.tuxmat.ca/products/8474-mazda-mx-5-custom-mat?variant=40829812310148&year=2023&utm_campaign=&utm_source=adwords&utm_medium=ppc&utm_term=&hsa_ad=&hsa_src=x&hsa_grp=&hsa_net=adwords&hsa_kw=&hsa_acc=3526944315&hsa_cam=18798628745&hsa_tgt=&hsa_ver"
+icon = "https://mazdashop.ca/cdn/shop/products/8474A1_5000x.jpg?v=1658855470"
 [[sections.items]]
 title = "Sound Tube Delete"
 url = "https://www.cravenspeed.com/sound-maker-delete-for-nd-miata/"
