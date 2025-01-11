@@ -20,6 +20,7 @@ class Section:
     description: Optional[str] = None
     icon: Optional[str] = None
     icon_size: str = "24px"
+    icon_align: str = "center"
     direction: str = "column"
     item_style: str = "outline"
     items: List[Item] = field(default_factory=list)
@@ -59,6 +60,7 @@ def load_data(file_path):
                 description=section.get("description"),
                 icon=section.get("icon"),
                 icon_size=section.get("icon_size", "24px"),
+                icon_align=section.get("icon_align", "center")
                 direction=section.get("direction", "column"),
                 item_style=section.get("item_style", "outline"),
                 items=[
