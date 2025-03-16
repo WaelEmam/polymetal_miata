@@ -163,7 +163,7 @@ def create_head(data: Data):
         ),
         raw(
             f"""
-                <script async src="https://www.googletagmanager.com/gtag/js?id={data.gtag_id}"></script>
+                <script defer src="https://analytics.box.thewefactor.ca/script.js" data-website-id={data.gtag_id}></script>
                 <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){{dataLayer.push(arguments);}}
