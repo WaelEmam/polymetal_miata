@@ -15,6 +15,7 @@ class Item:
     url: Optional[str] = None
     icon: Optional[str] = None
     icon_align: Optional[str] = None
+    icon_size: Optional[str] = None
     embed_url: Optional[str] = None
     embed_height: str = "315"
 
@@ -63,6 +64,30 @@ def normalize_alignment(
     normalized_value = value.strip().lower()
 
     if normalized_value not in VALID_ALIGNMENTS:
+        return default
+
+    return normalized_value
+
+
+def normalize_icon_size(
+    value: Optional[str],
+    default: str,
+) -> str:
+    """
+    Return the item icon size or fall back to the section icon size.
+
+    Examples of supported CSS values:
+    - 50px
+    - 4rem
+    - 10%
+    - 80px
+    """
+    if not value:
+        return default
+
+    normalized_value = value.strip()
+
+    if not normalized_value:
         return default
 
     return normalized_value
@@ -122,6 +147,7 @@ def load_data(file_path: str) -> Data:
                             if item.get("icon_align")
                             else None
                         ),
+                        icon_size=item.get("icon_size"),
                         embed_url=item.get("embed_url"),
                         embed_height=item.get(
                             "embed_height",
@@ -154,7 +180,11 @@ def get_icon_style(
     """
     Size and position an icon without changing text styling or colours.
     """
-    base_style = f"width: {icon_size};"
+    base_style = (
+        f"width: {icon_size}; "
+        "max-width: 100%; "
+        "height: auto;"
+    )
 
     if icon_align == "left":
         return (
@@ -237,7 +267,10 @@ def create_section(
                     src=item.icon,
                     alt=item.title,
                     style=get_icon_style(
-                        section.icon_size,
+                        normalize_icon_size(
+                            item.icon_size,
+                            section.icon_size,
+                        ),
                         normalize_alignment(
                             item.icon_align or default_icon_align
                         ),
@@ -248,7 +281,10 @@ def create_section(
                 h(
                     "hgroup",
                     style=get_text_group_style(
-                        section.icon_size,
+                        normalize_icon_size(
+                            item.icon_size,
+                            section.icon_size,
+                        ),
                         normalize_alignment(
                             item.icon_align or default_icon_align
                         ),
