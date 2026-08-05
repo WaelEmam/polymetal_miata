@@ -29,13 +29,14 @@ title = "Konig Hypergram (Metallic Carbon W/ Machined Lip)"
 ##description = "A groundbreaking romantic drama challenging societal expectations"
 url = "https://konigwheels.com/wheels/flow-formed-wheels/hypergram/"
 icon = "https://konigwheels.com/cdn/shop/files/hypergram-carbon_7bafac7f-bbdf-4e4a-8e83-8d71d45db541.webp?v=1732235596&width=1946"
+icon_align = "left"
 
 [[sections.items]]
 title = "Michelin Pilot Sport 4S Tires"
 ##description = "A gripping thriller entangling a detective in a web of secrets during a kidnapping investigation"
 url = "https://www.michelin.ca/en/auto/tires/michelin-pilot-sport-4-s/"
 icon = "https://aecbmesvcm.cloudimg.io/v7/https://cxf-prod.azureedge.net/b2c-experience-production/attachments/clxktok3t0r4001ljxli6t8yz-4w-240-tire-michelin-pilot-sport-4-s-en-us-features-and-benefits-1-nosignature-16-slash-9-web.max.png"
-[[sections.items]]
+icon_align = "left"
 
 [[sections.items]]
 title = "Mega Chipguards Splash Guards"
