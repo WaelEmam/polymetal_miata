@@ -1,8 +1,13 @@
 import tomllib
 from dataclasses import dataclass, field
 from typing import List, Optional
+
 from tinyhtml import html, h, frag, raw
+
+
 VALID_ALIGNMENTS = {"left", "center", "right"}
+
+
 @dataclass
 class Item:
     title: str
@@ -12,6 +17,8 @@ class Item:
     icon_align: Optional[str] = None
     embed_url: Optional[str] = None
     embed_height: str = "315"
+
+
 @dataclass
 class Section:
     title: str
@@ -21,6 +28,8 @@ class Section:
     direction: str = "column"
     item_style: str = "outline"
     items: List[Item] = field(default_factory=list)
+
+
 @dataclass
 class Data:
     name: str
@@ -34,19 +43,35 @@ class Data:
     text_align: str = "center"
     icon_align: str = "center"
     gtag_id: Optional[str] = None
+
+
 def normalize_alignment(
     value: Optional[str],
     default: str = "center",
 ) -> str:
+    """
+    Return a supported alignment value.
+
+    Supported values:
+    - left
+    - center
+    - right
+    """
     if not value:
         return default
+
     normalized_value = value.strip().lower()
+
     if normalized_value not in VALID_ALIGNMENTS:
         return default
+
     return normalized_value
+
+
 def load_data(file_path: str) -> Data:
     with open(file_path, "rb") as f:
         raw_data = tomllib.load(f)
+
     return Data(
         name=raw_data["name"],
         description=raw_data.get("description"),
@@ -109,6 +134,74 @@ def load_data(file_path: str) -> Data:
             for section in raw_data.get("sections", [])
         ],
     )
+
+
+def get_link_style(icon_align: str) -> str:
+    """
+    Establish a positioning boundary only for icons that are moved
+    to the left or right.
+    """
+    if icon_align in {"left", "right"}:
+        return "position: relative;"
+
+    return ""
+
+
+def get_icon_style(
+    icon_size: str,
+    icon_align: str,
+) -> str:
+    """
+    Size and position an icon without changing text styling or colours.
+    """
+    base_style = f"width: {icon_size};"
+
+    if icon_align == "left":
+        return (
+            f"{base_style} "
+            "position: absolute; "
+            "left: 1rem; "
+            "top: 50%; "
+            "transform: translateY(-50%); "
+            "margin: 0;"
+        )
+
+    if icon_align == "right":
+        return (
+            f"{base_style} "
+            "position: absolute; "
+            "right: 1rem; "
+            "top: 50%; "
+            "transform: translateY(-50%); "
+            "margin: 0;"
+        )
+
+    # Preserve the original Jake/Pico behaviour for centred images.
+    return base_style
+
+
+def get_text_group_style(
+    icon_size: str,
+    icon_align: str,
+) -> str:
+    """
+    Reserve equal space on both sides when an icon is moved left or right.
+
+    Equal left and right padding keeps the text truly centred in the button
+    and prevents it from overlapping the icon.
+    """
+    if icon_align in {"left", "right"}:
+        return (
+            "box-sizing: border-box; "
+            "width: 100%; "
+            f"padding-left: calc({icon_size} + 1.5rem); "
+            f"padding-right: calc({icon_size} + 1.5rem);"
+        )
+
+    # Do not alter centred items.
+    return ""
+
+
 def create_section(
     section: Section,
     default_icon_align: str,
@@ -126,30 +219,41 @@ def create_section(
                 "a",
                 role="button",
                 klass=(
-                    (
-                        "outline "
-                        if section.item_style == "outline"
-                        else ""
-                    )
-                    + "icon-align-"
-                    + normalize_alignment(
-                        item.icon_align or default_icon_align
-                    )
+                    "outline"
+                    if section.item_style == "outline"
+                    else ""
                 ),
                 href=item.url,
                 target="_blank",
-                style=f"--item-icon-size: {section.icon_size};",
+                style=get_link_style(
+                    normalize_alignment(
+                        item.icon_align or default_icon_align
+                    )
+                ),
             )(
                 h(
                     "img",
                     klass="icon",
                     src=item.icon,
                     alt=item.title,
-                    style=f"width: {section.icon_size};",
+                    style=get_icon_style(
+                        section.icon_size,
+                        normalize_alignment(
+                            item.icon_align or default_icon_align
+                        ),
+                    ),
                 )
                 if item.icon
                 else None,
-                h("hgroup")(
+                h(
+                    "hgroup",
+                    style=get_text_group_style(
+                        section.icon_size,
+                        normalize_alignment(
+                            item.icon_align or default_icon_align
+                        ),
+                    ),
+                )(
                     h("h4")(item.title),
                     h("h5")(item.description),
                 ),
@@ -172,6 +276,7 @@ def create_section(
         )
         for item in section.items
     )
+
     return h("div", klass="section")(
         h("hgroup")(
             h("h3")(section.title),
@@ -183,6 +288,8 @@ def create_section(
             style=f"flex-direction: {section.direction}",
         )(items),
     )
+
+
 def create_meta_tags(data: Data):
     return frag(
         h("title")(data.name),
@@ -238,6 +345,8 @@ def create_meta_tags(data: Data):
             content="summary_large_image",
         ),
     )
+
+
 def create_head(data: Data):
     return h("head")(
         create_meta_tags(data),
@@ -253,57 +362,12 @@ def create_head(data: Data):
         ),
         h("style", rel="stylesheet")(
             f"""
-                [data-theme="dark"],
-                [data-theme="light"] {{
+                [data-theme="dark"], [data-theme="light"] {{
                     --primary: {data.primary_color} !important;
                 }}
-                /*
-                 * Preserve the original text alignment behavior.
-                 */
+
                 * {{
                     text-align: {data.text_align};
-                }}
-                /*
-                 * Establish a positioning boundary without changing
-                 * Pico's original display, typography, or colors.
-                 */
-                .item > a[role="button"] {{
-                    position: relative;
-                }}
-                /*
-                 * Leave centre-aligned icons completely untouched.
-                 * They retain the original Jake/Pico layout.
-                 */
-                /*
-                 * Left-aligned icon.
-                 */
-                .item > a[role="button"].icon-align-left > .icon {{
-                    position: absolute;
-                    left: 1rem;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    margin: 0;
-                }}
-                /*
-                 * Right-aligned icon.
-                 */
-                .item > a[role="button"].icon-align-right > .icon {{
-                    position: absolute;
-                    right: 1rem;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    margin: 0;
-                }}
-                /*
-                 * Reserve matching space on both sides so the text remains
-                 * genuinely centred and cannot overlap a left/right image.
-                 */
-                .item > a[role="button"].icon-align-left > hgroup,
-                .item > a[role="button"].icon-align-right > hgroup {{
-                    box-sizing: border-box;
-                    width: 100%;
-                    padding-left: calc(var(--item-icon-size) + 1.5rem);
-                    padding-right: calc(var(--item-icon-size) + 1.5rem);
                 }}
             """
         ),
@@ -314,11 +378,14 @@ def create_head(data: Data):
                     src="https://analytics.thewefactor.ca/script.js"
                     data-website-id="{data.gtag_id}">
                 </script>
+
                 <script>
                     window.dataLayer = window.dataLayer || [];
+
                     function gtag() {{
                         dataLayer.push(arguments);
                     }}
+
                     gtag('js', new Date());
                     gtag('config', '{data.gtag_id}');
                 </script>
@@ -327,11 +394,10 @@ def create_head(data: Data):
         if data.gtag_id
         else None,
     )
+
+
 def create_header(data: Data):
-    return h(
-        "header",
-        klass="container",
-    )(
+    return h("header", klass="container")(
         h("hgroup")(
             h(
                 "img",
@@ -345,11 +411,10 @@ def create_header(data: Data):
             else None,
         )
     )
+
+
 def create_footer():
-    return h(
-        "footer",
-        klass="container",
-    )(
+    return h("footer", klass="container")(
         h("small")("Generated with "),
         h(
             "a",
@@ -358,6 +423,8 @@ def create_footer():
             target="_blank",
         )("Jake"),
     )
+
+
 def generate_html(data: Data):
     sections = frag(
         create_section(
@@ -366,6 +433,7 @@ def generate_html(data: Data):
         )
         for section in data.sections
     )
+
     return html(
         lang="en",
         data_theme=data.theme,
@@ -373,21 +441,23 @@ def generate_html(data: Data):
         create_head(data),
         h("body")(
             create_header(data),
-            h(
-                "main",
-                klass="container",
-            )(sections),
+            h("main", klass="container")(sections),
             create_footer(),
         ),
     ).render()
+
+
 def main():
     data = load_data("data.toml")
     output = generate_html(data)
+
     with open(
         "dist/index.html",
         "w",
         encoding="utf-8",
     ) as f:
         f.write(output)
+
+
 if __name__ == "__main__":
     main()
