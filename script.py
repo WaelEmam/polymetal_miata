@@ -5,6 +5,9 @@ from typing import List, Optional
 from tinyhtml import frag, h, html, raw
 
 
+VALID_ALIGNMENTS = {"left", "center", "right"}
+
+
 @dataclass
 class Item:
     title: str
@@ -42,53 +45,43 @@ class Data:
     gtag_id: Optional[str] = None
 
 
-def normalize_alignment(value: Optional[str], default: str = "center") -> str:
+def normalize_alignment(
+    value: Optional[str],
+    default: str = "center",
+) -> str:
     """
-    Ensure alignment values are limited to left, center, or right.
+    Return a supported CSS alignment value.
+
+    Supported values:
+    - left
+    - center
+    - right
     """
     if not value:
         return default
 
-    normalized_value = value.lower().strip()
+    normalized_value = value.strip().lower()
 
-    if normalized_value not in {"left", "center", "right"}:
+    if normalized_value not in VALID_ALIGNMENTS:
         return default
 
     return normalized_value
 
 
-def get_icon_style(icon_size: str, icon_align: str) -> str:
+def get_icon_style(icon_size: str) -> str:
     """
-    Build the inline CSS used to size and independently align an item image.
+    Return styles that control only the image size.
+
+    Image positioning is handled by the surrounding icon container.
     """
-    icon_align = normalize_alignment(icon_align)
-
-    alignments = {
-        "left": {
-            "margin_left": "0",
-            "margin_right": "auto",
-        },
-        "center": {
-            "margin_left": "auto",
-            "margin_right": "auto",
-        },
-        "right": {
-            "margin_left": "auto",
-            "margin_right": "0",
-        },
-    }
-
-    margins = alignments[icon_align]
-
     return (
         f"width: {icon_size}; "
-        "display: block; "
-        f"margin-left: {margins['margin_left']}; "
-        f"margin-right: {margins['margin_right']};"
+        "max-width: 100%; "
+        "display: inline-block;"
     )
 
 
-def load_data(file_path):
+def load_data(file_path: str) -> Data:
     with open(file_path, "rb") as f:
         raw_data = tomllib.load(f)
 
@@ -99,7 +92,10 @@ def load_data(file_path):
         base_url=raw_data["base_url"],
         image=raw_data.get("image"),
         theme=raw_data.get("theme", "dark"),
-        primary_color=raw_data.get("primary_color", "#546e7a"),
+        primary_color=raw_data.get(
+            "primary_color",
+            "#546e7a",
+        ),
         text_align=normalize_alignment(
             raw_data.get("text_align"),
             default="center",
@@ -114,9 +110,18 @@ def load_data(file_path):
                 title=section.get("title"),
                 description=section.get("description"),
                 icon=section.get("icon"),
-                icon_size=section.get("icon_size", "24px"),
-                direction=section.get("direction", "column"),
-                item_style=section.get("item_style", "outline"),
+                icon_size=section.get(
+                    "icon_size",
+                    "24px",
+                ),
+                direction=section.get(
+                    "direction",
+                    "column",
+                ),
+                item_style=section.get(
+                    "item_style",
+                    "outline",
+                ),
                 items=[
                     Item(
                         title=item.get("title"),
@@ -124,12 +129,17 @@ def load_data(file_path):
                         url=item.get("url"),
                         icon=item.get("icon"),
                         icon_align=(
-                            normalize_alignment(item.get("icon_align"))
+                            normalize_alignment(
+                                item.get("icon_align")
+                            )
                             if item.get("icon_align")
                             else None
                         ),
                         embed_url=item.get("embed_url"),
-                        embed_height=item.get("embed_height", "315"),
+                        embed_height=item.get(
+                            "embed_height",
+                            "315",
+                        ),
                     )
                     for item in section.get("items", [])
                 ],
@@ -139,13 +149,16 @@ def load_data(file_path):
     )
 
 
-def create_section(section: Section, default_icon_align: str):
+def create_section(
+    section: Section,
+    default_icon_align: str,
+):
     items = frag(
         h(
             "div",
             klass="item",
             style=(
-                f"width: "
+                "width: "
                 f"{'100%' if section.direction == 'column' else 'unset'}"
             ),
         )(
@@ -161,20 +174,33 @@ def create_section(section: Section, default_icon_align: str):
                 target="_blank",
             )(
                 h(
-                    "img",
-                    klass="icon",
-                    src=item.icon,
-                    alt=item.title,
-                    style=get_icon_style(
-                        section.icon_size,
-                        item.icon_align or default_icon_align,
+                    "div",
+                    klass="icon-container",
+                    style=(
+                        "text-align: "
+                        f"{normalize_alignment(item.icon_align or default_icon_align)};"
                     ),
+                )(
+                    h(
+                        "img",
+                        klass="icon",
+                        src=item.icon,
+                        alt=item.title,
+                        style=get_icon_style(
+                            section.icon_size
+                        ),
+                    )
                 )
                 if item.icon
                 else None,
-                h("hgroup")(
+                h(
+                    "hgroup",
+                    klass="item-text",
+                )(
                     h("h4")(item.title),
-                    h("h5")(item.description),
+                    h("h5")(item.description)
+                    if item.description
+                    else None,
                 ),
             )
             if item.url
@@ -184,9 +210,7 @@ def create_section(section: Section, default_icon_align: str):
                         src="{item.embed_url}"
                         height="{item.embed_height}"
                         frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write;
-                               encrypted-media; gyroscope;
-                               picture-in-picture"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowfullscreen="true"
                     >
                     </iframe>
@@ -198,10 +222,15 @@ def create_section(section: Section, default_icon_align: str):
         for item in section.items
     )
 
-    return h("div", klass="section")(
+    return h(
+        "div",
+        klass="section",
+    )(
         h("hgroup")(
             h("h3")(section.title),
-            h("p")(section.description),
+            h("p")(section.description)
+            if section.description
+            else None,
         ),
         h(
             "div",
@@ -229,7 +258,10 @@ def create_meta_tags(data: Data):
             name="viewport",
             content="width=device-width, initial-scale=1",
         ),
-        h("meta", charset="utf-8"),
+        h(
+            "meta",
+            charset="utf-8",
+        ),
         h(
             "meta",
             property="og:title",
@@ -281,23 +313,47 @@ def create_head(data: Data):
             rel="stylesheet",
             href="css/style.css",
         ),
-        h("style", rel="stylesheet")(
+        h(
+            "style",
+            rel="stylesheet",
+        )(
             f"""
                 [data-theme="dark"],
                 [data-theme="light"] {{
                     --primary: {data.primary_color} !important;
                 }}
 
-                h1,
-                h2,
-                h3,
-                h4,
-                h5,
-                h6,
-                p,
-                small,
-                footer {{
+                header hgroup,
+                header h1,
+                header p,
+                .section > hgroup,
+                .section > hgroup h3,
+                .section > hgroup p,
+                .item-text,
+                .item-text h4,
+                .item-text h5,
+                footer,
+                footer small {{
                     text-align: {data.text_align};
+                }}
+
+                .item > a {{
+                    display: block;
+                    width: 100%;
+                }}
+
+                .icon-container {{
+                    display: block;
+                    width: 100%;
+                }}
+
+                .icon-container .icon {{
+                    display: inline-block;
+                }}
+
+                .item-text {{
+                    display: block;
+                    width: 100%;
                 }}
             """
         ),
@@ -327,7 +383,10 @@ def create_head(data: Data):
 
 
 def create_header(data: Data):
-    return h("header", klass="container")(
+    return h(
+        "header",
+        klass="container",
+    )(
         h("hgroup")(
             h(
                 "img",
@@ -344,7 +403,10 @@ def create_header(data: Data):
 
 
 def create_footer():
-    return h("footer", klass="container")(
+    return h(
+        "footer",
+        klass="container",
+    )(
         h("small")("Generated with "),
         h(
             "a",
@@ -371,7 +433,10 @@ def generate_html(data: Data):
         create_head(data),
         h("body")(
             create_header(data),
-            h("main", klass="container")(sections),
+            h(
+                "main",
+                klass="container",
+            )(sections),
             create_footer(),
         ),
     ).render()
