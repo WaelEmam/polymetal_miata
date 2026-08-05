@@ -36,6 +36,7 @@ class Data:
     theme: str = "dark"
     primary_color: str = "#546e7a"
     text_align: str = "center"
+    icon_align: str = "center"
     gtag_id: Optional[str] = None
 
 
