@@ -28,6 +28,7 @@ title = "Konig Hypergram (Metallic Carbon W/ Machined Lip)"
 ##description = "A groundbreaking romantic drama challenging societal expectations"
 url = "https://konigwheels.com/wheels/flow-formed-wheels/hypergram/"
 icon = "https://konigwheels.com/cdn/shop/files/hypergram-carbon_7bafac7f-bbdf-4e4a-8e83-8d71d45db541.webp?v=1732235596&width=1946"
+
 [[sections.items]]
 title = "Michelin Pilot Sport 4S Tires"
 ##description = "A gripping thriller entangling a detective in a web of secrets during a kidnapping investigation"
@@ -42,9 +43,11 @@ url = "https://www.megachipguards.com/en-ca/products/nd-mazda-miata-chip-guards"
 icon = "https://www.megachipguards.com/cdn/shop/files/IMG_3186.CR2.jpg"
 ##icon_align = "right"
 
+[[sections.items]]
 title = "FM corner light"
 url = "https://flyinmiata.com/en-ca/products/variant-nd-corner-light-set?variant=43744892420351"
 icon = "https://flyinmiata.com/cdn/shop/products/28-3030x_ND_LED_Corner_Lights_021623--6.jpg?v=1677110949&width=2048"
+
 [[sections.items]]
 title = "MX5things Dashcam cable"
 url = "https://mx5things.com/en-ca/collections/mazda-mx-5-2016-nd-st/products/cable-for-plug-n-play-installation-blackvue-dashcam"
