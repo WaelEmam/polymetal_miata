@@ -1,13 +1,8 @@
 import tomllib
 from dataclasses import dataclass, field
 from typing import List, Optional
-
-from tinyhtml import frag, h, html, raw
-
-
+from tinyhtml import html, h, frag, raw
 VALID_ALIGNMENTS = {"left", "center", "right"}
-
-
 @dataclass
 class Item:
     title: str
@@ -17,8 +12,6 @@ class Item:
     icon_align: Optional[str] = None
     embed_url: Optional[str] = None
     embed_height: str = "315"
-
-
 @dataclass
 class Section:
     title: str
@@ -28,8 +21,6 @@ class Section:
     direction: str = "column"
     item_style: str = "outline"
     items: List[Item] = field(default_factory=list)
-
-
 @dataclass
 class Data:
     name: str
@@ -43,27 +34,19 @@ class Data:
     text_align: str = "center"
     icon_align: str = "center"
     gtag_id: Optional[str] = None
-
-
 def normalize_alignment(
     value: Optional[str],
     default: str = "center",
 ) -> str:
     if not value:
         return default
-
     normalized_value = value.strip().lower()
-
     if normalized_value not in VALID_ALIGNMENTS:
         return default
-
     return normalized_value
-
-
 def load_data(file_path: str) -> Data:
     with open(file_path, "rb") as f:
         raw_data = tomllib.load(f)
-
     return Data(
         name=raw_data["name"],
         description=raw_data.get("description"),
@@ -126,8 +109,6 @@ def load_data(file_path: str) -> Data:
             for section in raw_data.get("sections", [])
         ],
     )
-
-
 def create_section(
     section: Section,
     default_icon_align: str,
@@ -150,7 +131,6 @@ def create_section(
                         if section.item_style == "outline"
                         else ""
                     )
-                    + "item-link "
                     + "icon-align-"
                     + normalize_alignment(
                         item.icon_align or default_icon_align
@@ -158,6 +138,7 @@ def create_section(
                 ),
                 href=item.url,
                 target="_blank",
+                style=f"--item-icon-size: {section.icon_size};",
             )(
                 h(
                     "img",
@@ -168,14 +149,9 @@ def create_section(
                 )
                 if item.icon
                 else None,
-                h(
-                    "hgroup",
-                    klass="item-text",
-                )(
+                h("hgroup")(
                     h("h4")(item.title),
-                    h("h5")(item.description)
-                    if item.description
-                    else None,
+                    h("h5")(item.description),
                 ),
             )
             if item.url
@@ -196,16 +172,10 @@ def create_section(
         )
         for item in section.items
     )
-
-    return h(
-        "div",
-        klass="section",
-    )(
+    return h("div", klass="section")(
         h("hgroup")(
             h("h3")(section.title),
-            h("p")(section.description)
-            if section.description
-            else None,
+            h("p")(section.description),
         ),
         h(
             "div",
@@ -213,8 +183,6 @@ def create_section(
             style=f"flex-direction: {section.direction}",
         )(items),
     )
-
-
 def create_meta_tags(data: Data):
     return frag(
         h("title")(data.name),
@@ -270,8 +238,6 @@ def create_meta_tags(data: Data):
             content="summary_large_image",
         ),
     )
-
-
 def create_head(data: Data):
     return h("head")(
         create_meta_tags(data),
@@ -291,87 +257,53 @@ def create_head(data: Data):
                 [data-theme="light"] {{
                     --primary: {data.primary_color} !important;
                 }}
-
-                h1,
-                h2,
-                h3,
-                h4,
-                h5,
-                h6,
-                p,
-                small {{
+                /*
+                 * Preserve the original text alignment behavior.
+                 */
+                * {{
                     text-align: {data.text_align};
                 }}
-
                 /*
-                 * Each item remains a normal Pico button.
-                 * Grid only controls the internal positions.
+                 * Establish a positioning boundary without changing
+                 * Pico's original display, typography, or colors.
                  */
-                .item-link {{
-                    display: grid !important;
-                    grid-template-columns: 1fr auto 1fr;
-                    align-items: center;
+                .item > a[role="button"] {{
+                    position: relative;
+                }}
+                /*
+                 * Leave centre-aligned icons completely untouched.
+                 * They retain the original Jake/Pico layout.
+                 */
+                /*
+                 * Left-aligned icon.
+                 */
+                .item > a[role="button"].icon-align-left > .icon {{
+                    position: absolute;
+                    left: 1rem;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    margin: 0;
+                }}
+                /*
+                 * Right-aligned icon.
+                 */
+                .item > a[role="button"].icon-align-right > .icon {{
+                    position: absolute;
+                    right: 1rem;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    margin: 0;
+                }}
+                /*
+                 * Reserve matching space on both sides so the text remains
+                 * genuinely centred and cannot overlap a left/right image.
+                 */
+                .item > a[role="button"].icon-align-left > hgroup,
+                .item > a[role="button"].icon-align-right > hgroup {{
+                    box-sizing: border-box;
                     width: 100%;
-                    column-gap: 1rem;
-                }}
-
-                /*
-                 * Text always occupies the middle column.
-                 */
-                .item-link > .item-text {{
-                    grid-column: 2;
-                    grid-row: 1;
-                    width: auto;
-                    margin: 0;
-                    justify-self: center;
-                }}
-
-                .item-link > .item-text h4,
-                .item-link > .item-text h5 {{
-                    margin-left: 0;
-                    margin-right: 0;
-                    text-align: {data.text_align};
-                }}
-
-                /*
-                 * Independent image alignment.
-                 */
-                .item-link.icon-align-left > .icon {{
-                    grid-column: 1;
-                    grid-row: 1;
-                    justify-self: start;
-                }}
-
-                .item-link.icon-align-right > .icon {{
-                    grid-column: 3;
-                    grid-row: 1;
-                    justify-self: end;
-                }}
-
-                /*
-                 * Centred icons preserve the original vertical layout.
-                 */
-                .item-link.icon-align-center {{
-                    grid-template-columns: 1fr;
-                    grid-template-rows: auto auto;
-                    row-gap: 0.5rem;
-                }}
-
-                .item-link.icon-align-center > .icon {{
-                    grid-column: 1;
-                    grid-row: 1;
-                    justify-self: center;
-                }}
-
-                .item-link.icon-align-center > .item-text {{
-                    grid-column: 1;
-                    grid-row: 2;
-                    justify-self: stretch;
-                }}
-
-                .item-link > .icon {{
-                    display: block;
-                    margin: 0;
+                    padding-left: calc(var(--item-icon-size) + 1.5rem);
+                    padding-right: calc(var(--item-icon-size) + 1.5rem);
                 }}
             """
         ),
@@ -382,14 +314,11 @@ def create_head(data: Data):
                     src="https://analytics.thewefactor.ca/script.js"
                     data-website-id="{data.gtag_id}">
                 </script>
-
                 <script>
                     window.dataLayer = window.dataLayer || [];
-
                     function gtag() {{
                         dataLayer.push(arguments);
                     }}
-
                     gtag('js', new Date());
                     gtag('config', '{data.gtag_id}');
                 </script>
@@ -398,8 +327,6 @@ def create_head(data: Data):
         if data.gtag_id
         else None,
     )
-
-
 def create_header(data: Data):
     return h(
         "header",
@@ -418,8 +345,6 @@ def create_header(data: Data):
             else None,
         )
     )
-
-
 def create_footer():
     return h(
         "footer",
@@ -433,8 +358,6 @@ def create_footer():
             target="_blank",
         )("Jake"),
     )
-
-
 def generate_html(data: Data):
     sections = frag(
         create_section(
@@ -443,7 +366,6 @@ def generate_html(data: Data):
         )
         for section in data.sections
     )
-
     return html(
         lang="en",
         data_theme=data.theme,
@@ -458,19 +380,14 @@ def generate_html(data: Data):
             create_footer(),
         ),
     ).render()
-
-
 def main():
     data = load_data("data.toml")
     output = generate_html(data)
-
     with open(
         "dist/index.html",
         "w",
         encoding="utf-8",
     ) as f:
         f.write(output)
-
-
 if __name__ == "__main__":
     main()
