@@ -43,58 +43,79 @@ title = "Mega Chipguards Splash Guards"
 ##description = "A mesmerizing thriller delving into the dark world of crime journalism"
 url = "https://www.megachipguards.com/en-ca/products/nd-mazda-miata-chip-guards"
 icon = "https://www.megachipguards.com/cdn/shop/files/IMG_3186.CR2.jpg"
-##icon_align = "right"
+icon_align = "left"
 
 [[sections.items]]
 title = "FM corner light"
 url = "https://flyinmiata.com/en-ca/products/variant-nd-corner-light-set?variant=43744892420351"
 icon = "https://flyinmiata.com/cdn/shop/products/28-3030x_ND_LED_Corner_Lights_021623--6.jpg?v=1677110949&width=2048"
+icon_align = "left"
 
 [[sections.items]]
 title = "MX5things Dashcam cable"
 url = "https://mx5things.com/en-ca/collections/mazda-mx-5-2016-nd-st/products/cable-for-plug-n-play-installation-blackvue-dashcam"
 icon = "https://mx5things.com/cdn/shop/products/USBACC_720x.jpg?v=1582664500"
+icon_align = "left"
+
 [[sections.items]]
 title = "MX5things Airbag warning overlay"
 url = "https://mx5things.com/en-ca/collections/mazda-mx-5-2016-nd-st/products/air-bag-warning-overlay-replacement"
 icon = "https://mx5things.com/cdn/shop/products/ST_720x.png?v=1612122900"
+icon_align = "left"
+
 [[sections.items]]
 title = "MX5things DRL harness"
 url = "https://mx5things.com/en-ca/collections/mazda-mx-5-2016-nd-st/products/drl-harness"
 icon = "https://mx5things.com/cdn/shop/products/DRL_V4_720x.jpg?v=1592522763"
+icon_align = "left"
+
 [[sections.items]]
 title = "Cravenspeed Dipstick Handle"
 url = "https://www.cravenspeed.com/the-dipstick-handle-for-mazda/"
 icon = "https://cdn11.bigcommerce.com/s-351ed/images/stencil/original/products/7644/44900/dipstick-4__37044.1571244541__55685.1728424715.jpg?c=2"
+icon_align = "left"
+
 [[sections.items]]
 title = "Zunsport Full Lower Grille"
 url = "https://www.zunsport.com/en/mazda-grilles/mazda-mx5-mk4-full-lower-grille"
 icon = "https://cdn11.bigcommerce.com/s-d6wcnsknrk/images/stencil/1280x1280/products/1113/11347/ZMA59715__31559.1719398451.jpg?c=1"
+icon_align = "left"
+
 [[sections.items]]
 title = "TUXMAT Car Mats"
 url = "https://www.tuxmat.ca/products/8474-mazda-mx-5-custom-mat?variant=40829812310148&year=2023&utm_campaign=&utm_source=adwords&utm_medium=ppc&utm_term=&hsa_ad=&hsa_src=x&hsa_grp=&hsa_net=adwords&hsa_kw=&hsa_acc=3526944315&hsa_cam=18798628745&hsa_tgt=&hsa_ver"
 icon = "https://mazdashop.ca/cdn/shop/products/8474A1_5000x.jpg?v=1658855470"
+icon_align = "left"
+
 [[sections.items]]
 title = "Sound Tube Delete"
 url = "https://www.cravenspeed.com/sound-maker-delete-for-nd-miata/"
 icon = "https://cdn11.bigcommerce.com/s-351ed/images/stencil/original/products/20910/56575/noisemaker_delete_kit_CJ4EEBH_20910__90553.1704849609.jpg?c=2"
+icon_align = "left"
+
 [[sections.items]]
 title = "Stubby Antenna"
 url = "https://www.cravenspeed.com/the-original-stubby-antenna-for-2016-2020-mazda-miata-mx-5/"
 icon = "https://cdn11.bigcommerce.com/s-351ed/images/stencil/original/products/7581/56070/crmc-0703-the-original-stubby-antenna-replacement-for-2011-2016-mini-countryman__34648.1545333760__96808.1673894378.640.480__31381.1732145287.jpg?c=2"
+icon_align = "left"
+
 [[sections.items]]
 title = "Oil Filler Cap"
 url = "https://mazdashop.ca/products/oil-filler-cap-mx-5-mx-5-rf-2016-2024"
 icon = "https://mazdashop.ca/cdn/shop/products/Oil-Filler-Cap-MX-5-MX-5-RF-2016-2022_5000x.jpg?v=1653933088"
+icon_align = "left"
+
 [[sections.items]]
 title = "Cargo Tray"
 url = "https://mazdashop.ca/products/cargo-tray-mazda-mx-5-mx-5-rf-2016-2024"
 icon = "https://mazdashop.ca/cdn/shop/products/NF7R-V0-360_b1f91ffb-df36-40d4-80a2-eb24cd950427_5000x.jpg?v=1676404717"
+icon_align = "left"
+
 [[sections.items]]
 title = "Lasfit MX-5 Miata LED Turn Signal"
 url = "https://www.lasfit.com/products/2019-2020-mazda-mx-5-miata-led-turn-signal-backup-license-plate-light-bulbs"
 icon = "https://www.lasfit.com/cdn/shop/files/2016-2020-Mazda-MX-5-Miata-7440-led-rear-turn-signal-lights.jpg?crop=center&height=1875&v=1732238423&width=1500"
-
+icon_align = "left"
 
 [[sections]]
 title = "Links"
