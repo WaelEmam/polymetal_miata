@@ -2,7 +2,7 @@ import tomllib
 from dataclasses import dataclass, field
 from typing import List, Optional
 
-from tinyhtml import html, h, frag, raw
+from tinyhtml import frag, h, html, raw
 
 
 VALID_ALIGNMENTS = {"left", "center", "right"}
@@ -60,7 +60,7 @@ def normalize_alignment(
     return normalized_value
 
 
-def load_data(file_path):
+def load_data(file_path: str) -> Data:
     with open(file_path, "rb") as f:
         raw_data = tomllib.load(f)
 
@@ -71,7 +71,10 @@ def load_data(file_path):
         base_url=raw_data["base_url"],
         image=raw_data.get("image"),
         theme=raw_data.get("theme", "dark"),
-        primary_color=raw_data.get("primary_color", "#546e7a"),
+        primary_color=raw_data.get(
+            "primary_color",
+            "#546e7a",
+        ),
         text_align=normalize_alignment(
             raw_data.get("text_align"),
             default="center",
@@ -86,9 +89,18 @@ def load_data(file_path):
                 title=section.get("title"),
                 description=section.get("description"),
                 icon=section.get("icon"),
-                icon_size=section.get("icon_size", "24px"),
-                direction=section.get("direction", "column"),
-                item_style=section.get("item_style", "outline"),
+                icon_size=section.get(
+                    "icon_size",
+                    "24px",
+                ),
+                direction=section.get(
+                    "direction",
+                    "column",
+                ),
+                item_style=section.get(
+                    "item_style",
+                    "outline",
+                ),
                 items=[
                     Item(
                         title=item.get("title"),
@@ -96,12 +108,17 @@ def load_data(file_path):
                         url=item.get("url"),
                         icon=item.get("icon"),
                         icon_align=(
-                            normalize_alignment(item.get("icon_align"))
+                            normalize_alignment(
+                                item.get("icon_align")
+                            )
                             if item.get("icon_align")
                             else None
                         ),
                         embed_url=item.get("embed_url"),
-                        embed_height=item.get("embed_height", "315"),
+                        embed_height=item.get(
+                            "embed_height",
+                            "315",
+                        ),
                     )
                     for item in section.get("items", [])
                 ],
@@ -119,17 +136,28 @@ def create_section(
         h(
             "div",
             klass="item",
-            style=f"width: {'100%' if section.direction == 'column' else 'unset'}",
+            style=(
+                "width: "
+                f"{'100%' if section.direction == 'column' else 'unset'}"
+            ),
         )(
             h(
                 "a",
                 role="button",
-                klass=f"{'outline' if section.item_style == 'outline' else ''}",
+                klass=(
+                    (
+                        "outline "
+                        if section.item_style == "outline"
+                        else ""
+                    )
+                    + "item-link "
+                    + "icon-align-"
+                    + normalize_alignment(
+                        item.icon_align or default_icon_align
+                    )
+                ),
                 href=item.url,
                 target="_blank",
-                data_icon_align=normalize_alignment(
-                    item.icon_align or default_icon_align
-                ),
             )(
                 h(
                     "img",
@@ -140,9 +168,14 @@ def create_section(
                 )
                 if item.icon
                 else None,
-                h("hgroup", klass="item-text")(
+                h(
+                    "hgroup",
+                    klass="item-text",
+                )(
                     h("h4")(item.title),
-                    h("h5")(item.description),
+                    h("h5")(item.description)
+                    if item.description
+                    else None,
                 ),
             )
             if item.url
@@ -164,10 +197,15 @@ def create_section(
         for item in section.items
     )
 
-    return h("div", klass="section")(
+    return h(
+        "div",
+        klass="section",
+    )(
         h("hgroup")(
             h("h3")(section.title),
-            h("p")(section.description),
+            h("p")(section.description)
+            if section.description
+            else None,
         ),
         h(
             "div",
@@ -180,15 +218,27 @@ def create_section(
 def create_meta_tags(data: Data):
     return frag(
         h("title")(data.name),
-        h("meta", name="description", content=data.description),
-        h("meta", name="keywords", content=data.keywords),
+        h(
+            "meta",
+            name="description",
+            content=data.description,
+        ),
+        h(
+            "meta",
+            name="keywords",
+            content=data.keywords,
+        ),
         h(
             "meta",
             name="viewport",
             content="width=device-width, initial-scale=1",
         ),
         h("meta", charset="utf-8"),
-        h("meta", property="og:title", content=data.name),
+        h(
+            "meta",
+            property="og:title",
+            content=data.name,
+        ),
         h(
             "meta",
             property="og:description",
@@ -199,7 +249,11 @@ def create_meta_tags(data: Data):
             property="og:image",
             content=f"{data.base_url}/img/{data.image}",
         ),
-        h("meta", name="twitter:title", content=data.name),
+        h(
+            "meta",
+            name="twitter:title",
+            content=data.name,
+        ),
         h(
             "meta",
             name="twitter:description",
@@ -250,71 +304,72 @@ def create_head(data: Data):
                 }}
 
                 /*
-                 * Preserve Pico's existing button appearance and colors.
-                 * Only change how content is positioned inside item buttons.
+                 * Each item remains a normal Pico button.
+                 * Grid only controls the internal positions.
                  */
-                .item > a[role="button"] {{
-                    display: grid;
+                .item-link {{
+                    display: grid !important;
                     grid-template-columns: 1fr auto 1fr;
                     align-items: center;
-                    column-gap: 1rem;
                     width: 100%;
+                    column-gap: 1rem;
                 }}
 
                 /*
-                 * The text always occupies the true middle column.
+                 * Text always occupies the middle column.
                  */
-                .item > a[role="button"] > .item-text {{
+                .item-link > .item-text {{
                     grid-column: 2;
                     grid-row: 1;
+                    width: auto;
                     margin: 0;
-                    text-align: {data.text_align};
+                    justify-self: center;
                 }}
 
-                .item > a[role="button"] > .item-text h4,
-                .item > a[role="button"] > .item-text h5 {{
+                .item-link > .item-text h4,
+                .item-link > .item-text h5 {{
                     margin-left: 0;
                     margin-right: 0;
                     text-align: {data.text_align};
                 }}
 
                 /*
-                 * Image position is independent from text alignment.
+                 * Independent image alignment.
                  */
-                .item > a[role="button"][data-icon-align="right"] > .icon {{
-                    grid-column: 3;
-                    grid-row: 1;
-                    justify-self: end;
-                }}
-
-                .item > a[role="button"][data-icon-align="left"] > .icon {{
+                .item-link.icon-align-left > .icon {{
                     grid-column: 1;
                     grid-row: 1;
                     justify-self: start;
                 }}
 
-                .item > a[role="button"][data-icon-align="center"] > .icon {{
-                    grid-column: 2;
+                .item-link.icon-align-right > .icon {{
+                    grid-column: 3;
                     grid-row: 1;
-                    justify-self: center;
+                    justify-self: end;
                 }}
 
                 /*
-                 * When the image is centred, move the text below it so the
-                 * image and text do not overlap.
+                 * Centred icons preserve the original vertical layout.
                  */
-                .item > a[role="button"][data-icon-align="center"] {{
+                .item-link.icon-align-center {{
+                    grid-template-columns: 1fr;
                     grid-template-rows: auto auto;
                     row-gap: 0.5rem;
                 }}
 
-                .item > a[role="button"][data-icon-align="center"] > .item-text {{
-                    grid-column: 1 / -1;
+                .item-link.icon-align-center > .icon {{
+                    grid-column: 1;
+                    grid-row: 1;
+                    justify-self: center;
+                }}
+
+                .item-link.icon-align-center > .item-text {{
+                    grid-column: 1;
                     grid-row: 2;
                     justify-self: stretch;
                 }}
 
-                .item > a[role="button"] > .icon {{
+                .item-link > .icon {{
                     display: block;
                     margin: 0;
                 }}
@@ -346,7 +401,10 @@ def create_head(data: Data):
 
 
 def create_header(data: Data):
-    return h("header", klass="container")(
+    return h(
+        "header",
+        klass="container",
+    )(
         h("hgroup")(
             h(
                 "img",
@@ -363,7 +421,10 @@ def create_header(data: Data):
 
 
 def create_footer():
-    return h("footer", klass="container")(
+    return h(
+        "footer",
+        klass="container",
+    )(
         h("small")("Generated with "),
         h(
             "a",
@@ -390,7 +451,10 @@ def generate_html(data: Data):
         create_head(data),
         h("body")(
             create_header(data),
-            h("main", klass="container")(sections),
+            h(
+                "main",
+                klass="container",
+            )(sections),
             create_footer(),
         ),
     ).render()
