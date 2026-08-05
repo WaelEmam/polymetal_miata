@@ -10,6 +10,7 @@ class Item:
     description: Optional[str] = None
     url: Optional[str] = None
     icon: Optional[str] = None
+    icon_align: str = "center"
     embed_url: Optional[str] = None
     embed_height: str = "315"
 
@@ -53,6 +54,7 @@ def load_data(file_path):
         theme=raw_data.get("theme", "dark"),
         primary_color=raw_data.get("primary_color", "#546e7a"),
         text_align=raw_data.get("text_align", "center"),
+        icon_align=raw_data.get("icon_align", "center"),
         gtag_id=raw_data.get("gtag_id"),
         sections=[
             Section(
