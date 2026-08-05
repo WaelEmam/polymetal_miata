@@ -34,6 +34,14 @@ title = "Michelin Pilot Sport 4S Tires"
 url = "https://www.michelin.ca/en/auto/tires/michelin-pilot-sport-4-s/"
 icon = "https://aecbmesvcm.cloudimg.io/v7/https://cxf-prod.azureedge.net/b2c-experience-production/attachments/clxktok3t0r4001ljxli6t8yz-4w-240-tire-michelin-pilot-sport-4-s-en-us-features-and-benefits-1-nosignature-16-slash-9-web.max.png"
 [[sections.items]]
+
+[[sections.items]]
+title = "Mega Chipguards Splash Guards"
+##description = "A mesmerizing thriller delving into the dark world of crime journalism"
+url = "https://www.megachipguards.com/en-ca/products/nd-mazda-miata-chip-guards"
+icon = "https://www.megachipguards.com/cdn/shop/files/IMG_3186.CR2.jpg"
+##icon_align = "right"
+
 title = "FM corner light"
 url = "https://flyinmiata.com/en-ca/products/variant-nd-corner-light-set?variant=43744892420351"
 icon = "https://flyinmiata.com/cdn/shop/products/28-3030x_ND_LED_Corner_Lights_021623--6.jpg?v=1677110949&width=2048"
