@@ -1,7 +1,8 @@
 import tomllib
 from dataclasses import dataclass, field
 from typing import List, Optional
-from tinyhtml import html, h, frag, raw
+
+from tinyhtml import frag, h, html, raw
 
 
 @dataclass
@@ -10,7 +11,7 @@ class Item:
     description: Optional[str] = None
     url: Optional[str] = None
     icon: Optional[str] = None
-    icon_align: str = "center"
+    icon_align: Optional[str] = None
     embed_url: Optional[str] = None
     embed_height: str = "315"
 
@@ -41,6 +42,52 @@ class Data:
     gtag_id: Optional[str] = None
 
 
+def normalize_alignment(value: Optional[str], default: str = "center") -> str:
+    """
+    Ensure alignment values are limited to left, center, or right.
+    """
+    if not value:
+        return default
+
+    normalized_value = value.lower().strip()
+
+    if normalized_value not in {"left", "center", "right"}:
+        return default
+
+    return normalized_value
+
+
+def get_icon_style(icon_size: str, icon_align: str) -> str:
+    """
+    Build the inline CSS used to size and independently align an item image.
+    """
+    icon_align = normalize_alignment(icon_align)
+
+    alignments = {
+        "left": {
+            "margin_left": "0",
+            "margin_right": "auto",
+        },
+        "center": {
+            "margin_left": "auto",
+            "margin_right": "auto",
+        },
+        "right": {
+            "margin_left": "auto",
+            "margin_right": "0",
+        },
+    }
+
+    margins = alignments[icon_align]
+
+    return (
+        f"width: {icon_size}; "
+        "display: block; "
+        f"margin-left: {margins['margin_left']}; "
+        f"margin-right: {margins['margin_right']};"
+    )
+
+
 def load_data(file_path):
     with open(file_path, "rb") as f:
         raw_data = tomllib.load(f)
@@ -53,8 +100,14 @@ def load_data(file_path):
         image=raw_data.get("image"),
         theme=raw_data.get("theme", "dark"),
         primary_color=raw_data.get("primary_color", "#546e7a"),
-        text_align=raw_data.get("text_align", "center"),
-        icon_align=raw_data.get("icon_align", "center"),
+        text_align=normalize_alignment(
+            raw_data.get("text_align"),
+            default="center",
+        ),
+        icon_align=normalize_alignment(
+            raw_data.get("icon_align"),
+            default="center",
+        ),
         gtag_id=raw_data.get("gtag_id"),
         sections=[
             Section(
@@ -70,6 +123,11 @@ def load_data(file_path):
                         description=item.get("description"),
                         url=item.get("url"),
                         icon=item.get("icon"),
+                        icon_align=(
+                            normalize_alignment(item.get("icon_align"))
+                            if item.get("icon_align")
+                            else None
+                        ),
                         embed_url=item.get("embed_url"),
                         embed_height=item.get("embed_height", "315"),
                     )
@@ -81,17 +139,24 @@ def load_data(file_path):
     )
 
 
-def create_section(section: Section):
+def create_section(section: Section, default_icon_align: str):
     items = frag(
         h(
             "div",
             klass="item",
-            style=f"width: {'100%' if section.direction == 'column' else 'unset'}",
+            style=(
+                f"width: "
+                f"{'100%' if section.direction == 'column' else 'unset'}"
+            ),
         )(
             h(
                 "a",
                 role="button",
-                klass=f"{'outline' if section.item_style == 'outline' else ''}",
+                klass=(
+                    "outline"
+                    if section.item_style == "outline"
+                    else ""
+                ),
                 href=item.url,
                 target="_blank",
             )(
@@ -100,23 +165,33 @@ def create_section(section: Section):
                     klass="icon",
                     src=item.icon,
                     alt=item.title,
-                    style=f"width: {section.icon_size};",
+                    style=get_icon_style(
+                        section.icon_size,
+                        item.icon_align or default_icon_align,
+                    ),
                 )
                 if item.icon
                 else None,
-                h("hgroup")(h("h4")(item.title), h("h5")(item.description)),
+                h("hgroup")(
+                    h("h4")(item.title),
+                    h("h5")(item.description),
+                ),
             )
             if item.url
-            else raw(f"""
-                <iframe 
-                    src="{item.embed_url}" 
-                    height="{item.embed_height}" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen="true"
-                >
-                </iframe>
-            """)
+            else raw(
+                f"""
+                    <iframe
+                        src="{item.embed_url}"
+                        height="{item.embed_height}"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write;
+                               encrypted-media; gyroscope;
+                               picture-in-picture"
+                        allowfullscreen="true"
+                    >
+                    </iframe>
+                """
+            )
             if item.embed_url
             else None
         )
@@ -128,50 +203,121 @@ def create_section(section: Section):
             h("h3")(section.title),
             h("p")(section.description),
         ),
-        h("div", klass="items", style=f"flex-direction: {section.direction}")(items),
+        h(
+            "div",
+            klass="items",
+            style=f"flex-direction: {section.direction}",
+        )(items),
     )
 
 
 def create_meta_tags(data: Data):
     return frag(
         h("title")(data.name),
-        h("meta", name="description", content=data.description),
-        h("meta", name="keywords", content=data.keywords),
-        h("meta", name="viewport", content="width=device-width, initial-scale=1"),
+        h(
+            "meta",
+            name="description",
+            content=data.description,
+        ),
+        h(
+            "meta",
+            name="keywords",
+            content=data.keywords,
+        ),
+        h(
+            "meta",
+            name="viewport",
+            content="width=device-width, initial-scale=1",
+        ),
         h("meta", charset="utf-8"),
-        h("meta", property="og:title", content=data.name),
-        h("meta", property="og:description", content=data.description),
-        h("meta", property="og:image", content=f"{data.base_url}/img/{data.image}"),
-        h("meta", name="twitter:title", content=data.name),
-        h("meta", name="twitter:description", content=data.description),
-        h("meta", name="twitter:image", content=f"{data.base_url}/img/{data.image}"),
-        h("meta", name="twitter:card", content="summary_large_image"),
+        h(
+            "meta",
+            property="og:title",
+            content=data.name,
+        ),
+        h(
+            "meta",
+            property="og:description",
+            content=data.description,
+        ),
+        h(
+            "meta",
+            property="og:image",
+            content=f"{data.base_url}/img/{data.image}",
+        ),
+        h(
+            "meta",
+            name="twitter:title",
+            content=data.name,
+        ),
+        h(
+            "meta",
+            name="twitter:description",
+            content=data.description,
+        ),
+        h(
+            "meta",
+            name="twitter:image",
+            content=f"{data.base_url}/img/{data.image}",
+        ),
+        h(
+            "meta",
+            name="twitter:card",
+            content="summary_large_image",
+        ),
     )
 
 
 def create_head(data: Data):
     return h("head")(
         create_meta_tags(data),
-        h("link", rel="stylesheet", href="css/pico.min.css"),
-        h("link", rel="stylesheet", href="css/style.css"),
+        h(
+            "link",
+            rel="stylesheet",
+            href="css/pico.min.css",
+        ),
+        h(
+            "link",
+            rel="stylesheet",
+            href="css/style.css",
+        ),
         h("style", rel="stylesheet")(
             f"""
-                [data-theme="dark"], [data-theme="light"] {{
+                [data-theme="dark"],
+                [data-theme="light"] {{
                     --primary: {data.primary_color} !important;
                 }}
-                * {{
+
+                h1,
+                h2,
+                h3,
+                h4,
+                h5,
+                h6,
+                p,
+                small,
+                footer {{
                     text-align: {data.text_align};
                 }}
             """
         ),
         raw(
             f"""
-                <script defer src="https://analytics.thewefactor.ca/script.js" data-website-id={data.gtag_id}></script>
+                <script
+                    defer
+                    src="https://analytics.thewefactor.ca/script.js"
+                    data-website-id="{data.gtag_id}">
+                </script>
+
                 <script>
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){{dataLayer.push(arguments);}}
-                gtag('js', new Date());
-                gtag('config', '{data.gtag_id}');
+                    window.dataLayer = window.dataLayer || [];
+
+                    function gtag() {{
+                        dataLayer.push(arguments);
+                    }}
+
+                    gtag('js', new Date());
+                    gtag('config', '{data.gtag_id}');
                 </script>
             """
         )
@@ -183,9 +329,16 @@ def create_head(data: Data):
 def create_header(data: Data):
     return h("header", klass="container")(
         h("hgroup")(
-            h("img", klass="avatar", src=f"img/{data.image}", alt="avatar"),
+            h(
+                "img",
+                klass="avatar",
+                src=f"img/{data.image}",
+                alt="avatar",
+            ),
             h("h1")(data.name),
-            h("p")(data.description) if data.description else None,
+            h("p")(data.description)
+            if data.description
+            else None,
         )
     )
 
@@ -193,15 +346,28 @@ def create_header(data: Data):
 def create_footer():
     return h("footer", klass="container")(
         h("small")("Generated with "),
-        h("a", klass="", href="https://github.com/thevahidal/jake/", target="_blank")(
-            "Jake"
-        ),
+        h(
+            "a",
+            klass="",
+            href="https://github.com/thevahidal/jake/",
+            target="_blank",
+        )("Jake"),
     )
 
 
 def generate_html(data: Data):
-    sections = frag(create_section(section) for section in data.sections)
-    return html(lang="en", data_theme=data.theme)(
+    sections = frag(
+        create_section(
+            section,
+            default_icon_align=data.icon_align,
+        )
+        for section in data.sections
+    )
+
+    return html(
+        lang="en",
+        data_theme=data.theme,
+    )(
         create_head(data),
         h("body")(
             create_header(data),
@@ -214,7 +380,12 @@ def generate_html(data: Data):
 def main():
     data = load_data("data.toml")
     output = generate_html(data)
-    with open("dist/index.html", "w") as f:
+
+    with open(
+        "dist/index.html",
+        "w",
+        encoding="utf-8",
+    ) as f:
         f.write(output)
 
 
